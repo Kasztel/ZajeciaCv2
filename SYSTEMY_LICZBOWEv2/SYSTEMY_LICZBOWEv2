@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#define MAX 1024
+#define INT_REGEX "^[0-9]*\n?$"
+//program działa do systemu 16, powinien działać do conajmniej 30 (jak sprawdzałem to dla paru liczb działał)
+int good_input() {
+    regex_t check;
+    int spr;
+    char xyz[MAX];
+    char *pnum;
+
+    fgets(xyz, MAX, stdin);
+
+    spr = regcomp(&check, INT_REGEX, REG_EXTENDED);
+    spr = regexec(&check, xyz, 0, NULL, 0);
+
+    int out = strtod(xyz, &pnum);
+
+    if (out < 2) {
+        printf("Nie ma systemu liczbowego, który ma podstawą niższą niż 2!");
+        exit(1);
+    }
+
+    if (!spr) {
+        return out;
+    }
+    else {
+        printf("Podane złe dane!\nSpróbuj ponownie!\n");
+        exit(1);
+    }
+}
+
+int main() {
+    int sys,n,pom,j;
+    int i = 1;
+    char finalNumber[MAX];
+    printf("Proszę podaj system liczbowy: \n");
+    sys = good_input();
+    printf("Proszę podaj liczbę do przekonwertowania: \n");
+    n = good_input();
+    int mem = n;
+    while(n!=0) {
+        pom = n % sys;
+
+        if (pom < 10) {
+            finalNumber[i++] = 48 + pom;}
+        else {
+            finalNumber[i++] = 55 + pom;}
+        n = n / sys;
+
+    }
+    printf("Podana liczba zapisana w systemie %d to: \n", sys);
+    for(j=i;j>=1;j--) {
+        printf("%c", finalNumber[j]);
+    }
+
+
+}
