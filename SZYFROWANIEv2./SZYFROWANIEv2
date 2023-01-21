@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+int main(int argc, char const *argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Brak nazwy pliku \n");
+        return 1;
+    }
+
+    char *tmpname = tmpnam(NULL);
+
+    FILE *file1; 
+    if (NULL == (file1 = fopen(argv[1],"rb"))) return 1;
+
+    FILE *file2;
+    if (NULL == (file2 = fopen(tmpname,"wb"))) return 1;
+
+
+    char passwd[20];
+    printf("Podaj hasło: ");
+    scanf("%s", passwd);
+
+    int i = 0;
+    char c;
+
+    while (EOF != (c = getc(file1)))
+    {
+        c ^= passwd[ i % (strlen(passwd)) ];
+        fputc(c, file2);
+        i++;
+    }
+
+    unlink(argv[1]);
+    rename(tmpname ,argv[1]);
+    fclose(file1);
+    fclose(file2);
+
+    return 0;
+}
